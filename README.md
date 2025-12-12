@@ -131,7 +131,7 @@ The frontend will run on **http://localhost:3000**
 
 ## 🔄 Future Enhancements
 
-- Database integration (Maybe)
+- Database integration
 - JWT authentication
 - Real-time updates with WebSockets
 - Bug fixes
