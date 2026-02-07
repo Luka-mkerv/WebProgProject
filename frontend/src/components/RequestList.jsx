@@ -13,6 +13,10 @@ function RequestList({ user }) {
   useEffect(() => {
     fetchRequests()
     fetchEmployees()
+    
+    // Poll for new requests every 10 seconds
+    const interval = setInterval(fetchRequests, 10000)
+    return () => clearInterval(interval)
   }, [])
 
   const fetchRequests = async () => {
@@ -65,7 +69,11 @@ function RequestList({ user }) {
   }
 
   const getEmployeeName = (employeeId) => {
-    const employee = employees.find(e => e.id === employeeId)
+    // Handle both object and string IDs
+    if (typeof employeeId === 'object' && employeeId?.name) {
+      return employeeId.name
+    }
+    const employee = employees.find(e => e._id === employeeId)
     return employee ? employee.name : 'Unknown'
   }
 
@@ -73,7 +81,11 @@ function RequestList({ user }) {
 
   const filteredRequests =
     user.role === 'Employee'
-      ? requests.filter(req => req.employeeId === user.id)
+      ? requests.filter(req => {
+          // Handle both populated object and string ID
+          const empId = typeof req.employeeId === 'string' ? req.employeeId : req.employeeId?._id
+          return empId === user._id
+        })
       : requests
 
   if (loading) return <div className="loading">Loading requests...</div>
@@ -81,7 +93,7 @@ function RequestList({ user }) {
   return (
     <div>
       <div className="section-header">
-        <h2>Change Requests</h2>
+       
         {user.role === 'Employee' && (
           <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
             + New Request
@@ -94,7 +106,7 @@ function RequestList({ user }) {
       ) : (
         <div>
           {filteredRequests.map(request => (
-            <div key={request.id} className="shift-card" style={{ marginBottom: '15px' }}>
+            <div key={request._id} className="shift-card" style={{ marginBottom: '15px' }}>
               <div
                 style={{
                   display: 'flex',
@@ -122,7 +134,7 @@ function RequestList({ user }) {
                 {user.role === 'Employee' ? (
                   <button
                     className="btn btn-danger btn-small"
-                    onClick={() => handleDelete(request.id)}
+                    onClick={() => handleDelete(request._id)}
                   >
                     Delete
                   </button>
@@ -131,13 +143,13 @@ function RequestList({ user }) {
                     <>
                       <button
                         className="btn btn-primary btn-small"
-                        onClick={() => handleApprove(request.id)}
+                        onClick={() => handleApprove(request._id)}
                       >
                         Approve
                       </button>
                       <button
                         className="btn btn-danger btn-small"
-                        onClick={() => handleReject(request.id)}
+                        onClick={() => handleReject(request._id)}
                       >
                         Reject
                       </button>

@@ -5,7 +5,7 @@ const API_URL = 'http://localhost:5000/api'
 
 function AddShift({ employees, onClose, onAdd }) {
   const [formData, setFormData] = useState({
-    employeeId: employees[0]?.id || '',
+    employeeId: employees[0]?._id || '',
     date: '',
     startTime: '',
     endTime: '',
@@ -17,7 +17,7 @@ function AddShift({ employees, onClose, onAdd }) {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'employeeId' ? parseInt(value) : value
+      [name]: value
     }))
   }
 
@@ -53,8 +53,8 @@ function AddShift({ employees, onClose, onAdd }) {
               required
             >
               {employees.map(emp => (
-                <option key={emp.id} value={emp.id}>{emp.name}</option>
-              ))}
+                <option key={emp._id} value={emp._id}>{emp.name}</option>
+             ))}
             </select>
           </div>
 

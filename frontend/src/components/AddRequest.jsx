@@ -22,7 +22,7 @@ function AddRequest({ user, onClose, onAdd }) {
     setLoading(true)
     try {
       const payload = {
-        employeeId: user.id,
+        employeeId: user._id, 
         type,
         shiftDate,
         reason,
